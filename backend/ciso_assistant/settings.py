@@ -165,14 +165,15 @@ if USE_S3:
     AWS_S3_FILE_OVERWRITE = False
 elif USE_AZURE_STORAGE:
     from azure.identity import DefaultAzureCredential
+
     STORAGES = {
         "default": {
             "BACKEND": "storages.backends.azure_storage.AzureStorage",
             "OPTIONS": {
                 "token_credential": DefaultAzureCredential(),
                 "account_name": os.getenv("AZURE_STORAGE_ACCOUNT_NAME", ""),
-                "azure_container": os.getenv("AZURE_STORAGE_CONTAINER_NAME", "",
-            }
+                "azure_container": os.getenv("AZURE_STORAGE_CONTAINER_NAME", ""),
+            },
         },
         "staticfiles": {
             "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
@@ -184,7 +185,7 @@ elif USE_AZURE_STORAGE:
     AWS_STORAGE_BUCKET_NAME = os.getenv(
         "AWS_STORAGE_BUCKET_NAME", "ciso-assistant-bucket"
     )
-    
+
     logger.info("AZURE_STORAGE_ACCOUNT_NAME: %s", AZURE_STORAGE_ACCOUNT_NAME)
 else:
     MEDIA_ROOT = LOCAL_STORAGE_DIRECTORY
