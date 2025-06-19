@@ -17,8 +17,8 @@
 
 	// Use 'postCreateCommand' to run commands after the container is created.
 	"postCreateCommand": {
-		"peotry": "poetry install",
-		"pre-commit": "pre-commit install",
+		"pango": "sudo apt update && sudo apt install -y libpango-1.0-0 libpangoft2-1.0-0",
+		"poetry": "cd backend && poetry install && poetry run pre-commit install",
 		"frontend": "cd frontend && npm install -g pnpm && pnpm install"
 	}
 
