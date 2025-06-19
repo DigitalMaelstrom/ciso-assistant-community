@@ -131,6 +131,7 @@ LOCAL_STORAGE_DIRECTORY = os.environ.get(
 ATTACHMENT_MAX_SIZE_MB = os.environ.get("ATTACHMENT_MAX_SIZE_MB", 10)
 
 USE_S3 = os.getenv("USE_S3", "False") == "True"
+USE_AZURE_STORAGE = os.getenv("USE_AZURE_STORAGE", "False") == "True"
 
 if USE_S3:
     STORAGES = {
@@ -162,7 +163,29 @@ if USE_S3:
     logger.info("AWS_S3_ENDPOINT_URL: %s", AWS_S3_ENDPOINT_URL)
 
     AWS_S3_FILE_OVERWRITE = False
+elif USE_AZURE_STORAGE:
+    from azure.identity import DefaultAzureCredential
+    STORAGES = {
+        "default": {
+            "BACKEND": "storages.backends.azure_storage.AzureStorage",
+            "OPTIONS": {
+                "token_credential": DefaultAzureCredential(),
+                "account_name": os.getenv("AZURE_STORAGE_ACCOUNT_NAME", ""),
+                "azure_container": os.getenv("AZURE_STORAGE_CONTAINER_NAME", "",
+            }
+        },
+        "staticfiles": {
+            "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
+        },
+    }
 
+    AWS_ACCESS_KEY_ID = os.getenv("AWS_ACCESS_KEY_ID")
+    AWS_SECRET_ACCESS_KEY = os.getenv("AWS_SECRET_ACCESS_KEY")
+    AWS_STORAGE_BUCKET_NAME = os.getenv(
+        "AWS_STORAGE_BUCKET_NAME", "ciso-assistant-bucket"
+    )
+    
+    logger.info("AZURE_STORAGE_ACCOUNT_NAME: %s", AZURE_STORAGE_ACCOUNT_NAME)
 else:
     MEDIA_ROOT = LOCAL_STORAGE_DIRECTORY
     MEDIA_URL = ""
